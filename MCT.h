@@ -9,9 +9,12 @@
 
 class MCT{
 public:
-    explicit MCT(node r = nullptr):root(r){init();}
+    MCT(node r = nullptr):root(r){init();}
     ~MCT() = default;
-
+    node selection();
+    void expansion();
+    void simulation();
+    void backpropagation();
 private:
     void init(){
         auto tmpNode = new Node;
@@ -22,10 +25,7 @@ private:
         tmpNode->num = 0;
         root = tmpNode;
     }
-    node selection(MCT tree);
-    void expansion();
-    void simulation();
-    void backpropagation();
+
 private:
     node root;
 };
