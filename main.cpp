@@ -1,6 +1,9 @@
 #include <iostream>
+#include "MCT.h"
+
 
 int main() {
-    std::cout << "Hello World!" << std::endl;
+    MCT tree();
+    std::cout << "Hello, World!" << std::endl;
     return 0;
 }
