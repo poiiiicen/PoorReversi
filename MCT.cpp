@@ -3,11 +3,21 @@
 //
 #include "MCT.h"
 
-void MCT::selection(MCT tree)
+node MCT::selection(MCT tree)
 {
-    for (auto tmpNode :tree.root->Next){
-
+    node maxNode = tree.root;
+    while(maxNode->num) {
+        double max = 0;
+        for (auto tmpNode : tree.root->Next) {
+            double tmpVal;
+            tmpVal = tmpNode->win * 1.0 / tmpNode->n + tmpNode->c * (log(tmpNode->t) / tmpNode->n);
+            if (max < tmpVal) {
+                max = tmpVal;
+                maxNode = tmpNode;
+            }
+        }
     }
+    return maxNode;
 }
 
 void MCT::expansion()

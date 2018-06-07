@@ -22,7 +22,7 @@ private:
         tmpNode->num = 0;
         root = tmpNode;
     }
-    void selection(MCT tree);
+    node selection(MCT tree);
     void expansion();
     void simulation();
     void backpropagation();
