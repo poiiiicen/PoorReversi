@@ -5,9 +5,7 @@
 
 void MCT::selection(MCT tree)
 {
-    auto tmpNode = new Node;
-    Node* pNode = tree.root;
-    for (tmpNode : *pNode->Next){
+    for (auto tmpNode :tree.root->Next){
 
     }
 }

@@ -15,7 +15,7 @@ struct Node
     int t;     //sum of total times
 
     int num;   //number of sons
-    std::vector<node> *Next; //point to the son node
+    std::vector<node> Next; //point to the son node
 };
 
 #endif //POORREVERSI_NODE_H

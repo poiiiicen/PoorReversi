@@ -20,7 +20,6 @@ private:
         tmpNode->c = sqrt(2);
         tmpNode->t = 0;
         tmpNode->num = 0;
-        tmpNode->Next = new std::vector<node>;
         root = tmpNode;
     }
     void selection(MCT tree);
