@@ -39,7 +39,7 @@ std::pair<int, int> MCT::updateMCT(int map[8][8])
             maxNode = tmpNode;
         }
     }
-    return std::pair<int, int>(maxNode->curi, maxNode->curj);
+    return {maxNode->curi, maxNode->curj};
 }
 
 void MCT::initMap(int map[8][8], bool color)
@@ -136,11 +136,11 @@ bool MCT::simulation(node curNode)
         run(tmpMap, i, j, tmpColor);
         tmpColor = !tmpColor;
         candidate.clear();
-        for(int i = 0; i < 8; i++) {
+        /*for(int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++)
                 std::cout << tmpMap[i][j] << " ";
             std::cout << std::endl;
-        }
+        }*/
     }
 
     return isWin(tmpMap, root->color);
