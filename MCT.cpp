@@ -92,5 +92,5 @@ bool MCT::simulation(node curNode)
 
 void MCT::backPropagation(bool isWin)
 {
-    
+
 }
