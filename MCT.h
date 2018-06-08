@@ -5,15 +5,17 @@
 #ifndef POORREVERSI_MCT_H
 #define POORREVERSI_MCT_H
 #include <cmath>
+#include "logic.h"
 #include "node.h"
 
 class MCT{
 public:
-    MCT(node r = nullptr):root(r){init();}
+    explicit MCT(node r = nullptr):root(r){init();}
     ~MCT() = default;
+    void initMap();
     node selection();
-    void expansion(node curNode);
-    void simulation();
+    node expansion(node curNode);
+    void simulation(node curNode);
     void backpropagation();
 private:
     void init(){
@@ -24,9 +26,10 @@ private:
         tmpNode->t = 0;
         tmpNode->num = 0;
         tmpNode->space = 64;
+        for (auto &i : tmpNode->map)
+                for (int &j : i) j = 0;
+        for (int i = 0; i < 64; i++) tmpNode->candidate.push_back(i);
         root = tmpNode;
-        for (int i = 0; i < 8; i++)
-            for (int j = 0; j < 8; j++) tmpNode->map[i][j] = 0;
     }
 
 private:

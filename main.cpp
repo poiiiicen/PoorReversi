@@ -1,18 +1,16 @@
 #include <iostream>
 #include "MCT.h"
 
-void initmap(){
-
-}
 
 int main() {
     MCT tree;
 
-    initmap();
+    tree.initMap();
 
     node curNode;
     curNode = tree.selection();
-    tree.expansion(curNode);
+    curNode = tree.expansion(curNode);
+    tree.simulation(curNode);
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }

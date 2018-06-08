@@ -2,4 +2,4 @@ project(PoorReversi)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(PoorReversi main.cpp MCT.cpp MCT.h node.h)
+add_executable(PoorReversi main.cpp MCT.cpp MCT.h node.h logic.cpp logic.h)
