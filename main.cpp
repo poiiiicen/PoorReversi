@@ -10,7 +10,7 @@ int main() {
     node curNode;
     curNode = tree.selection();
     curNode = tree.expansion(curNode);
-    tree.simulation(curNode);
+    tree.backPropagation(tree.simulation(curNode));
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }

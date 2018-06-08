@@ -15,8 +15,8 @@ public:
     void initMap();
     node selection();
     node expansion(node curNode);
-    void simulation(node curNode);
-    void backpropagation();
+    bool simulation(node curNode);
+    void backPropagation(bool isWin);
 private:
     void init(){
         auto tmpNode = new Node;

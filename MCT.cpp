@@ -63,7 +63,7 @@ node MCT::expansion(node curNode)
     return tmpNode;
 }
 
-void MCT::simulation(node curNode)
+bool MCT::simulation(node curNode)
 {
     std::default_random_engine random(static_cast<unsigned int>(time(nullptr)));
     int tmpMap[8][8];
@@ -74,14 +74,23 @@ void MCT::simulation(node curNode)
     bool tmpColor = !curNode->color;
 
     while (!isEnd(tmpMap, tmpColor) && !isEnd(tmpMap, !tmpColor)){
+        if (isEnd(tmpMap, tmpColor)) tmpColor = !tmpColor;
         for (int i = 0; i < 8; i ++)
             for (int j = 0; j < 8; j++)
                 if (isLegal(tmpMap,i,j,tmpColor)) candidate.push_back(i*8+j);
-        break;
+        auto randRange = static_cast<int>(candidate.size());
+        std::uniform_int_distribution<int> dis(1, randRange);
+        int t = dis(random);
+        int i = candidate[t] / 8, j = candidate[t] % 8;
+        run(tmpMap, i, j, tmpColor);
+        tmpColor = !tmpColor;
+        candidate.clear();
     }
+
+    return isWin(tmpMap, root->color);
 }
 
-void MCT::backpropagation()
+void MCT::backPropagation(bool isWin)
 {
-
+    
 }

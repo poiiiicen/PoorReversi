@@ -422,3 +422,13 @@ bool isEnd(int map[8][8], bool color)
     }
     return flag;
 }
+
+bool isWin(int map[8][8], bool color)
+{
+    int black = 0, white = 0;
+    for (int i = 0; i < 8; i++)
+        for (int j = 0; j < 8; j++)
+            if (map[i][j] == 1) black++;
+            else if (map[i][j] == 2) white++;
+    return black > white && color || white > black && !color;
+}
