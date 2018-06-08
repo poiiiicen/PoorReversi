@@ -5,6 +5,7 @@
 #ifndef POORREVERSI_MCT_H
 #define POORREVERSI_MCT_H
 #include <cmath>
+#include "timer.h"
 #include "logic.h"
 #include "node.h"
 
@@ -12,11 +13,8 @@ class MCT{
 public:
     explicit MCT(node r = nullptr):root(r){init();}
     ~MCT() = default;
-    void initMap();
-    node selection();
-    node expansion(node curNode);
-    bool simulation(node curNode);
-    void backPropagation(node curNode, bool isWin);
+    void creatMCT(int map[8][8], bool color);
+    void updateMCT(int map[8][8]);
 private:
     void init(){
         auto tmpNode = new Node;
@@ -32,9 +30,14 @@ private:
         tmpNode->father = nullptr;
         root = tmpNode;
     }
-
+    void initMap(int map[8][8], bool color);
+    node selection();
+    node expansion(node curNode);
+    bool simulation(node curNode);
+    void backPropagation(node curNode, bool isWin);
 private:
     node root;
+    bool treeColor;
 };
 
 

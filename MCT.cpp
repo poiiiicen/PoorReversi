@@ -5,11 +5,56 @@
 #include <random>
 #include <ctime>
 
-void MCT::initMap()
+void MCT::creatMCT(int map[8][8], bool color)
 {
+    treeColor = color;
+    initMap(map, color);
+    bool flag = true;
+    using comjTimer::timer;
+    timer timer1;
+    timer1.start();
+    while(flag) {
+        node curNode;
+        curNode = selection();
+        curNode = expansion(curNode);
+        backPropagation(curNode, simulation(curNode));
+        if (timer1.getTime() > 58) flag = false;
+    }
+}
+void MCT::updateMCT(int map[8][8])
+{
+    initMap(map, treeColor);
+    bool flag = true;
+    using comjTimer::timer;
+    timer timer1;
+    timer1.start();
+    while(flag) {
+        node curNode;
+        curNode = selection();
+        curNode = expansion(curNode);
+        backPropagation(curNode, simulation(curNode));
+        if (timer1.getTime() > 58) flag = false;
+    }
+}
+
+void MCT::initMap(int map[8][8], bool color)
+{
+    auto tmpNode = new Node;
+    tmpNode->color = color;
+    tmpNode->win = 0;
+    tmpNode->n = 0;
+    tmpNode->c = sqrt(2);
+    tmpNode->t = 0;
+    tmpNode->num = 0;
+    tmpNode->space = 64;
+    for(int i = 0; i < 8; i++)
+        for (int j = 0; j < 8; j++) tmpNode->map[i][j] = map[i][j];
     for (int i = 0; i < 8; i ++)
         for (int j = 0; j < 8; j++)
             if (isLegal(root->map,i,j,root->color)) root->candidate.push_back(i*8+j);
+    tmpNode->father = nullptr;
+    root = tmpNode;
+
 }
 
 node MCT::selection()
@@ -125,3 +170,4 @@ void MCT::backPropagation(node curNode, bool isWin)
         tmpNode->t++;
     }
 }
+
