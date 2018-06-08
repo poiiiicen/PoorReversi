@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cpr/cpr.h>
+#include <exception>
 #include "MCT.h"
 
 const std::string SESSION_ID = "7";
@@ -10,7 +11,7 @@ const std::string GET_BOARD = "/board_string/" + SESSION_ID;
 const std::string POST_MOVE = "/move/" + SESSION_ID;
 
 std::string get_response(std::string URL) {
-    auto res = cpr::Get(cpr::Url{URL});
+    auto res = cpr::Get(cpr::Url{std::move(URL)});
     if (res.status_code != 200) {
         return res.text;
     }
@@ -18,10 +19,11 @@ std::string get_response(std::string URL) {
 }
 
 std::string post_response(std::string URL) {
-    auto res = cpr::Post(cpr::Url{URL});
+    auto res = cpr::Post(cpr::Url{std::move(URL)});
     if (res.status_code != 200) {
-        return res.text;
+        throw std::exception();
     }
+    return res.text;
     // Throw Exception
 }
 
@@ -54,10 +56,12 @@ bool move(MCT &mct, std::string player) {
     int board[8][8] = {0};
     decode_board(res, board);
     auto pos = mct.updateMCT(board);
-    if (pos == (-1, -1))
+    if (pos.first == -1)
+        return true;
+    if (pos.second == -1)
         return false;
     res = post_response(
-            SERVER + POST_MOVE + "/" + std::string(pos.first) + "/" + std::string(pos.second) + "/" + player);
+            SERVER + POST_MOVE + "/" + std::to_string(pos.first) + "/" + std::to_string(pos.second) + "/" + player);
     if (res == "ERROR") {
         std::cout << "Unexpected Move" << std::endl;
     }
@@ -65,14 +69,13 @@ bool move(MCT &mct, std::string player) {
 }
 
 int main() {
-    //auto rep = cpr::Get(cpr::Url{SERVER + CREATE_SESSION});
     const auto player = get_player();
     MCT mct;
     if (player.empty()) {
         std::cout << "Unexpected Player" << std::endl;
         return 1;
     }
-    mct.createMCT(player);
+    mct.createMCT(player == "B");
     while (true) {
         if (get_turn() != player) {
             std::this_thread::sleep_for(std::chrono::seconds(1));
