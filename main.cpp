@@ -1,7 +1,7 @@
 #include <iostream>
 #include <cpr/cpr.h>
-#include <exception>
 #include "MCT.h"
+#include "exceptions.h"
 
 const std::string SESSION_ID = "7";
 const std::string SERVER = "http://47.89.179.202:5000";
@@ -13,34 +13,41 @@ const std::string POST_MOVE = "/move/" + SESSION_ID;
 std::string get_response(std::string URL) {
     auto res = cpr::Get(cpr::Url{std::move(URL)});
     if (res.status_code != 200) {
-        return res.text;
+        throw StatusCodeException(res.status_code);
     }
-    // Throw Exception
+    return res.text;
 }
 
 std::string post_response(std::string URL) {
     auto res = cpr::Post(cpr::Url{std::move(URL)});
     if (res.status_code != 200) {
-        throw std::exception();
+        throw StatusCodeException(res.status_code);
     }
     return res.text;
-    // Throw Exception
 }
 
 std::string get_player() {
-    auto res = get_response(SERVER + CREATE_SESSION);
-    if (res.length() == 1 && res == "W" || res == "B") {
-        return res;
+    std::string res;
+    try {
+        res = get_response(SERVER + CREATE_SESSION);
     }
-    return "";
+    catch (StatusCodeException &e) { std::cout << e.what() << " " << e.get_status_code() << std::endl; }
+    if (res.length() != 1 || res != "W" && res != "B") {
+        throw PlayerException();
+    }
+    return res;
 }
 
 std::string get_turn() {
-    auto res = get_response(SERVER + GET_TURN);
-    if (res.length() == 1 && res == "W" || res == "B") {
-        return res;
+    std::string res;
+    try {
+        res = get_response(SERVER + GET_TURN);
     }
-    return "";
+    catch (StatusCodeException &e) { std::cout << e.what() << " " << e.get_status_code() << std::endl; }
+    if (res.length() != 1 || res != "W" && res != "B") {
+        throw TurnException();
+    }
+    return res;
 }
 
 void decode_board(std::string origin_board, int board[8][8]) {
@@ -51,10 +58,21 @@ void decode_board(std::string origin_board, int board[8][8]) {
     }
 }
 
-bool move(MCT &mct, std::string player) {
-    auto res = get_response(SERVER + GET_BOARD);
+bool move(MCT &mct, const std::string &player) {
+    std::string res;
+    try {
+        res = get_response(SERVER + GET_BOARD);
+    }
+    catch (StatusCodeException &e) { std::cout << e.what() << " " << e.get_status_code() << std::endl; }
+
     int board[8][8] = {0};
-    decode_board(res, board);
+    try {
+        decode_board(res, board);
+    }
+    catch (BoardException &e) {
+        std::cout << e.what() << std::endl;
+        return false;
+    }
     auto pos = mct.updateMCT(board);
     if (pos.first == -1)
         return true;
@@ -63,26 +81,41 @@ bool move(MCT &mct, std::string player) {
     res = post_response(
             SERVER + POST_MOVE + "/" + std::to_string(pos.first) + "/" + std::to_string(pos.second) + "/" + player);
     if (res == "ERROR") {
-        std::cout << "Unexpected Move" << std::endl;
+        throw MoveException();
     }
     return true;
 }
 
 int main() {
-    const auto player = get_player();
-    MCT mct;
-    if (player.empty()) {
-        std::cout << "Unexpected Player" << std::endl;
+    std::string player;
+    try {
+        player = get_player();
+    }
+    catch (PlayerException &e) {
+        std::cout << e.what() << std::endl;
         return 1;
     }
+    MCT mct;
     mct.createMCT(player == "B");
     while (true) {
-        if (get_turn() != player) {
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-            continue;
+        try {
+            if (get_turn() != player) {
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                continue;
+            }
         }
-        if (!move(mct, player)) {
-            break;
+        catch (TurnException &e) {
+            std::cout << e.what() << std::endl;
+            return 1;
+        }
+        try {
+            if (!move(mct, player)) {
+                break;
+            }
+        }
+        catch (BoardException &e) {
+            std::cout << e.what() << std::endl;
+            return 1;
         }
     }
     return 0;
