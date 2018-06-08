@@ -12,7 +12,7 @@ public:
     MCT(node r = nullptr):root(r){init();}
     ~MCT() = default;
     node selection();
-    void expansion();
+    void expansion(node curNode);
     void simulation();
     void backpropagation();
 private:
@@ -23,7 +23,10 @@ private:
         tmpNode->c = sqrt(2);
         tmpNode->t = 0;
         tmpNode->num = 0;
+        tmpNode->space = 64;
         root = tmpNode;
+        for (int i = 0; i < 8; i++)
+            for (int j = 0; j < 8; j++) tmpNode->map[i][j] = 0;
     }
 
 private:
