@@ -58,7 +58,7 @@ node MCT::expansion(node curNode)
     curNode->Next.push_back(tmpNode);
     for (i = 0; i < 8; i ++)
         for (j = 0; j < 8; j++)
-            if (isLegal(tmpNode->map,i,j,root->color)) tmpNode->candidate.push_back(i*8+j);
+            if (isLegal(tmpNode->map,i,j,tmpNode->color)) tmpNode->candidate.push_back(i*8+j);
 
     return tmpNode;
 }
@@ -67,12 +67,16 @@ void MCT::simulation(node curNode)
 {
     std::default_random_engine random(static_cast<unsigned int>(time(nullptr)));
     int tmpMap[8][8];
-    for (int i = 0; i < 8; i ++)
+    std::vector<int> candidate;
+    for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++) tmpMap[i][j] = curNode->map[i][j];
 
     bool tmpColor = !curNode->color;
 
     while (!isEnd(tmpMap, tmpColor) && !isEnd(tmpMap, !tmpColor)){
+        for (int i = 0; i < 8; i ++)
+            for (int j = 0; j < 8; j++)
+                if (isLegal(tmpMap,i,j,tmpColor)) candidate.push_back(i*8+j);
         break;
     }
 }
