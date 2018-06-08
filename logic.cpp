@@ -413,14 +413,12 @@ void run(int map[8][8], int coni, int conj, bool color)
 
 bool isEnd(int map[8][8], bool color)
 {
-    bool flag = false;
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++)
             if (isLegal(map, i, j, color)){
-                flag = true;
-                break;
+                return false;
     }
-    return flag;
+    return true;
 }
 
 bool isWin(int map[8][8], bool color)

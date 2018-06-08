@@ -5,6 +5,7 @@
 #ifndef POORREVERSI_MCT_H
 #define POORREVERSI_MCT_H
 #include <cmath>
+#include <random>
 #include "timer.h"
 #include "logic.h"
 #include "node.h"
@@ -38,6 +39,8 @@ private:
 private:
     node root;
     bool treeColor;
+    std::default_random_engine random;
+    int lunci;
 };
 
 

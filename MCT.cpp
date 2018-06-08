@@ -2,11 +2,14 @@
 // Created by bluejoe on 2018/6/7.
 //
 #include "MCT.h"
-#include <random>
+#include <iostream>
 #include <ctime>
 
 void MCT::creatMCT(int map[8][8], bool color)
 {
+    std::default_random_engine random(static_cast<unsigned int>(time(nullptr)));
+    this->random = random;
+    lunci = 0;
     treeColor = color;
     initMap(map, color);
     bool flag = true;
@@ -18,6 +21,9 @@ void MCT::creatMCT(int map[8][8], bool color)
         curNode = selection();
         curNode = expansion(curNode);
         backPropagation(curNode, simulation(curNode));
+        lunci++;
+        //std::cout<<lunci<<std::endl;
+        //std::cout<<timer1.getTime()<<std::endl;
         if (timer1.getTime() > 58) flag = false;
     }
 }
@@ -51,7 +57,7 @@ void MCT::initMap(int map[8][8], bool color)
         for (int j = 0; j < 8; j++) tmpNode->map[i][j] = map[i][j];
     for (int i = 0; i < 8; i ++)
         for (int j = 0; j < 8; j++)
-            if (isLegal(root->map,i,j,root->color)) root->candidate.push_back(i*8+j);
+            if (isLegal(tmpNode->map,i,j,tmpNode->color)) tmpNode->candidate.push_back(i*8+j);
     tmpNode->father = nullptr;
     root = tmpNode;
 
@@ -60,8 +66,8 @@ void MCT::initMap(int map[8][8], bool color)
 node MCT::selection()
 {
     node curNode = this->root;
-    while(curNode->num) {
-        double max = 0;
+    while(curNode->candidate.empty()) {
+        double max = -1;
         auto maxNode = new Node;
         for (auto tmpNode : curNode->Next) {
             double tmpVal;
@@ -78,21 +84,20 @@ node MCT::selection()
 
 node MCT::expansion(node curNode)
 {
-    std::default_random_engine random(static_cast<unsigned int>(time(nullptr)));
-
     auto tmpNode = new Node;
-    tmpNode->color = !curNode->color;
+
     for (int i = 0; i < 8; i ++)
         for (int j = 0; j < 8; j++) tmpNode->map[i][j] = curNode->map[i][j];
 
     auto randRange = static_cast<int>(curNode->candidate.size());
-    std::uniform_int_distribution<int> dis(1, randRange);
+    std::uniform_int_distribution<int> dis(0, randRange - 1);
     //printf("%d\n",dis(random));
     int t = dis(random);
     int i = curNode->candidate[t] / 8, j = curNode->candidate[t] % 8;
     auto it = curNode->candidate.begin()+t;
     curNode->candidate.erase(it);
-    run(tmpNode->map, i, j, tmpNode->color);
+    run(tmpNode->map, i, j, curNode->color);
+    tmpNode->color = !curNode->color;
     curNode->num++;
     tmpNode->c = curNode->c;
     tmpNode->space = curNode->space - 1;
@@ -111,21 +116,20 @@ node MCT::expansion(node curNode)
 
 bool MCT::simulation(node curNode)
 {
-    std::default_random_engine random(static_cast<unsigned int>(time(nullptr)));
     int tmpMap[8][8];
     std::vector<int> candidate;
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++) tmpMap[i][j] = curNode->map[i][j];
 
-    bool tmpColor = !curNode->color;
+    bool tmpColor = curNode->color;
 
-    while (!isEnd(tmpMap, tmpColor) && !isEnd(tmpMap, !tmpColor)){
+    while (!isEnd(tmpMap, tmpColor) || !isEnd(tmpMap, !tmpColor)){
         if (isEnd(tmpMap, tmpColor)) tmpColor = !tmpColor;
         for (int i = 0; i < 8; i ++)
             for (int j = 0; j < 8; j++)
                 if (isLegal(tmpMap,i,j,tmpColor)) candidate.push_back(i*8+j);
         auto randRange = static_cast<int>(candidate.size());
-        std::uniform_int_distribution<int> dis(1, randRange);
+        std::uniform_int_distribution<int> dis(0, randRange - 1);
         int t = dis(random);
         int i = candidate[t] / 8, j = candidate[t] % 8;
         run(tmpMap, i, j, tmpColor);
@@ -146,13 +150,13 @@ void MCT::backPropagation(node curNode, bool isWin)
             tmpNode->n++;
             for(auto i : tmpNode->Next) i->t = tmpNode->n;
             tmpNode->win++;
-            tmpNode = curNode->father;
+            tmpNode = tmpNode->father;
         }
 
         tmpNode->n++;
         tmpNode->win++;
         tmpNode->t++;
-
+        for(auto i : tmpNode->Next) i->t = tmpNode->n;
 
     }
     else
@@ -163,11 +167,12 @@ void MCT::backPropagation(node curNode, bool isWin)
             tmpNode->n++;
             for(auto i : tmpNode->Next) i->t = tmpNode->n;
 
-            tmpNode = curNode->father;
+            tmpNode = tmpNode->father;
         }
 
         tmpNode->n++;
         tmpNode->t++;
+        for(auto i : tmpNode->Next) i->t = tmpNode->n;
     }
 }
 
