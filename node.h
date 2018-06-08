@@ -4,11 +4,11 @@
 
 #ifndef POORREVERSI_NODE_H
 #define POORREVERSI_NODE_H
+
 #include <vector>
 
-typedef struct Node* node;
-struct Node
-{
+typedef struct Node *node;
+struct Node {
     int win;   //win times
     int n;     //total times
     double c;  //const

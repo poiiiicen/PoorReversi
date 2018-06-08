@@ -5,21 +5,20 @@
 #include <iostream>
 #include <ctime>
 
-void MCT::createMCT(bool color)
-{
+void MCT::createMCT(bool color) {
     std::default_random_engine random(static_cast<unsigned int>(time(nullptr)));
     this->random = random;
     lunci = 0;
     treeColor = color;
 }
-std::pair<int, int> MCT::updateMCT(int map[8][8])
-{
+
+std::pair<int, int> MCT::updateMCT(int map[8][8]) {
     initMap(map, treeColor);
     bool flag = true;
     using comjTimer::timer;
     timer timer1;
     timer1.start();
-    while(flag) {
+    while (flag) {
         node curNode;
         curNode = selection();
         if (!curNode->isEnd) {
@@ -41,13 +40,12 @@ std::pair<int, int> MCT::updateMCT(int map[8][8])
             maxNode = tmpNode;
         }
     }
-    if(!maxNode->isEnd && maxNode->color == treeColor) return {maxNode->curi, maxNode->curj};
+    if (!maxNode->isEnd && maxNode->color == treeColor) return {maxNode->curi, maxNode->curj};
     else if (maxNode->color != treeColor) return {-1, 0};
     else if (maxNode->isEnd) return {0, -1};
 }
 
-void MCT::initMap(int map[8][8], bool color)
-{
+void MCT::initMap(int map[8][8], bool color) {
     auto tmpNode = new Node;
     tmpNode->color = color;
     tmpNode->win = 0;
@@ -56,20 +54,19 @@ void MCT::initMap(int map[8][8], bool color)
     tmpNode->t = 0;
     tmpNode->num = 0;
     tmpNode->space = 64;
-    for(int i = 0; i < 8; i++)
+    for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++) tmpNode->map[i][j] = map[i][j];
-    for (int i = 0; i < 8; i ++)
+    for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++)
-            if (isLegal(tmpNode->map,i,j,tmpNode->color)) tmpNode->candidate.push_back(i*8+j);
+            if (isLegal(tmpNode->map, i, j, tmpNode->color)) tmpNode->candidate.push_back(i * 8 + j);
     tmpNode->father = nullptr;
     root = tmpNode;
 
 }
 
-node MCT::selection()
-{
+node MCT::selection() {
     node curNode = this->root;
-    while(curNode->candidate.empty()) {
+    while (curNode->candidate.empty()) {
         double max = -1;
         auto maxNode = new Node;
         for (auto tmpNode : curNode->Next) {
@@ -85,13 +82,12 @@ node MCT::selection()
     return curNode;
 }
 
-node MCT::expansion(node curNode)
-{
+node MCT::expansion(node curNode) {
     auto tmpNode = new Node;
 
-    for (int i = 0; i < 8; i ++)
+    for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++) tmpNode->map[i][j] = curNode->map[i][j];
-    if (curNode->candidate.empty()) ;
+    if (curNode->candidate.empty());
     else {
         auto randRange = static_cast<int>(curNode->candidate.size());
         std::uniform_int_distribution<int> dis(0, randRange - 1);
@@ -114,21 +110,20 @@ node MCT::expansion(node curNode)
     tmpNode->n = 0;
     tmpNode->father = curNode;
     curNode->Next.push_back(tmpNode);
-    for (int i = 0; i < 8; i ++)
+    for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++)
-            if (isLegal(tmpNode->map,i,j,tmpNode->color)) tmpNode->candidate.push_back(i*8+j);
+            if (isLegal(tmpNode->map, i, j, tmpNode->color)) tmpNode->candidate.push_back(i * 8 + j);
     if (tmpNode->candidate.empty()) {
         tmpNode->color = !tmpNode->color;
-        for (int i = 0; i < 8; i ++)
+        for (int i = 0; i < 8; i++)
             for (int j = 0; j < 8; j++)
-                if (isLegal(tmpNode->map,i,j,tmpNode->color)) tmpNode->candidate.push_back(i*8+j);
-        if(tmpNode->candidate.empty()) tmpNode->isEnd = true;
+                if (isLegal(tmpNode->map, i, j, tmpNode->color)) tmpNode->candidate.push_back(i * 8 + j);
+        if (tmpNode->candidate.empty()) tmpNode->isEnd = true;
     }
     return tmpNode;
 }
 
-bool MCT::simulation(node curNode)
-{
+bool MCT::simulation(node curNode) {
     int tmpMap[8][8];
     std::vector<int> candidate;
     for (int i = 0; i < 8; i++)
@@ -136,11 +131,11 @@ bool MCT::simulation(node curNode)
 
     bool tmpColor = curNode->color;
 
-    while (!isEnd(tmpMap, tmpColor) || !isEnd(tmpMap, !tmpColor)){
+    while (!isEnd(tmpMap, tmpColor) || !isEnd(tmpMap, !tmpColor)) {
         if (isEnd(tmpMap, tmpColor)) tmpColor = !tmpColor;
-        for (int i = 0; i < 8; i ++)
+        for (int i = 0; i < 8; i++)
             for (int j = 0; j < 8; j++)
-                if (isLegal(tmpMap,i,j,tmpColor)) candidate.push_back(i*8+j);
+                if (isLegal(tmpMap, i, j, tmpColor)) candidate.push_back(i * 8 + j);
         auto randRange = static_cast<int>(candidate.size());
         std::uniform_int_distribution<int> dis(0, randRange - 1);
         int t = dis(random);
@@ -158,15 +153,13 @@ bool MCT::simulation(node curNode)
     return isWin(tmpMap, root->color);
 }
 
-void MCT::backPropagation(node curNode, bool isWin)
-{
-    if(isWin)
-    {
+void MCT::backPropagation(node curNode, bool isWin) {
+    if (isWin) {
         node tmpNode = curNode;
 
-        while (tmpNode->father!= nullptr) {
+        while (tmpNode->father != nullptr) {
             tmpNode->n++;
-            for(auto i : tmpNode->Next) i->t = tmpNode->n;
+            for (auto i : tmpNode->Next) i->t = tmpNode->n;
             tmpNode->win++;
             tmpNode = tmpNode->father;
         }
@@ -174,23 +167,21 @@ void MCT::backPropagation(node curNode, bool isWin)
         tmpNode->n++;
         tmpNode->win++;
         tmpNode->t++;
-        for(auto i : tmpNode->Next) i->t = tmpNode->n;
+        for (auto i : tmpNode->Next) i->t = tmpNode->n;
 
-    }
-    else
-    {
+    } else {
         node tmpNode = curNode;
 
-        while (tmpNode->father!= nullptr) {
+        while (tmpNode->father != nullptr) {
             tmpNode->n++;
-            for(auto i : tmpNode->Next) i->t = tmpNode->n;
+            for (auto i : tmpNode->Next) i->t = tmpNode->n;
 
             tmpNode = tmpNode->father;
         }
 
         tmpNode->n++;
         tmpNode->t++;
-        for(auto i : tmpNode->Next) i->t = tmpNode->n;
+        for (auto i : tmpNode->Next) i->t = tmpNode->n;
     }
 }
 

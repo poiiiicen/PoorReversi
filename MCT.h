@@ -4,20 +4,25 @@
 
 #ifndef POORREVERSI_MCT_H
 #define POORREVERSI_MCT_H
+
 #include <cmath>
 #include <random>
 #include "timer.h"
 #include "logic.h"
 #include "node.h"
 
-class MCT{
+class MCT {
 public:
-    MCT(){init();}
+    MCT() { init(); }
+
     ~MCT() = default;
+
     void createMCT(bool color);
+
     std::pair<int, int> updateMCT(int map[8][8]);
+
 private:
-    void init(){
+    void init() {
         auto tmpNode = new Node;
         tmpNode->win = 0;
         tmpNode->n = 0;
@@ -29,7 +34,7 @@ private:
         tmpNode->curj = -1;
         tmpNode->isEnd = false;
         for (auto &i : tmpNode->map)
-                for (int &j : i) j = 0;
+            for (int &j : i) j = 0;
         for (int i = 0; i < 64; i++) tmpNode->candidate.push_back(i);
         tmpNode->father = nullptr;
         root = tmpNode;
@@ -37,11 +42,17 @@ private:
         treeColor = false;
 
     }
+
     void initMap(int map[8][8], bool color);
+
     node selection();
+
     node expansion(node curNode);
+
     bool simulation(node curNode);
+
     void backPropagation(node curNode, bool isWin);
+
 private:
     node root{};
     bool treeColor{};
