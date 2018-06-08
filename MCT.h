@@ -16,7 +16,7 @@ public:
     node selection();
     node expansion(node curNode);
     bool simulation(node curNode);
-    void backPropagation(bool isWin);
+    void backPropagation(node curNode, bool isWin);
 private:
     void init(){
         auto tmpNode = new Node;
@@ -29,6 +29,7 @@ private:
         for (auto &i : tmpNode->map)
                 for (int &j : i) j = 0;
         for (int i = 0; i < 64; i++) tmpNode->candidate.push_back(i);
+        tmpNode->father = nullptr;
         root = tmpNode;
     }
 

@@ -20,6 +20,7 @@ struct Node
     std::vector<int> candidate; //candidate of point
     int map[8][8];  //map of chess, 0 for no, 1 for black, 2 for white
     bool color; //0 for white, 1 for black
+    node father;
 };
 
 #endif //POORREVERSI_NODE_H

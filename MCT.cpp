@@ -55,6 +55,7 @@ node MCT::expansion(node curNode)
     tmpNode->t = curNode->n;
     tmpNode->win = 0;
     tmpNode->n = 0;
+    tmpNode->father = curNode;
     curNode->Next.push_back(tmpNode);
     for (i = 0; i < 8; i ++)
         for (j = 0; j < 8; j++)
@@ -90,7 +91,37 @@ bool MCT::simulation(node curNode)
     return isWin(tmpMap, root->color);
 }
 
-void MCT::backPropagation(bool isWin)
+void MCT::backPropagation(node curNode, bool isWin)
 {
+    if(isWin)
+    {
+        node tmpNode = curNode;
 
+        while (tmpNode->father!= nullptr) {
+            tmpNode->n++;
+            for(auto i : tmpNode->Next) i->t = tmpNode->n;
+            tmpNode->win++;
+            tmpNode = curNode->father;
+        }
+
+        tmpNode->n++;
+        tmpNode->win++;
+        tmpNode->t++;
+
+
+    }
+    else
+    {
+        node tmpNode = curNode;
+
+        while (tmpNode->father!= nullptr) {
+            tmpNode->n++;
+            for(auto i : tmpNode->Next) i->t = tmpNode->n;
+
+            tmpNode = curNode->father;
+        }
+
+        tmpNode->n++;
+        tmpNode->t++;
+    }
 }
