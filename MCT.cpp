@@ -5,13 +5,16 @@
 #include <iostream>
 #include <ctime>
 
-void MCT::creatMCT(int map[8][8], bool color)
+void MCT::createMCT(bool color)
 {
     std::default_random_engine random(static_cast<unsigned int>(time(nullptr)));
     this->random = random;
     lunci = 0;
     treeColor = color;
-    initMap(map, color);
+}
+std::pair<int, int> MCT::updateMCT(int map[8][8])
+{
+    initMap(map, treeColor);
     bool flag = true;
     using comjTimer::timer;
     timer timer1;
@@ -26,21 +29,17 @@ void MCT::creatMCT(int map[8][8], bool color)
         //std::cout<<timer1.getTime()<<std::endl;
         if (timer1.getTime() > 58) flag = false;
     }
-}
-void MCT::updateMCT(int map[8][8])
-{
-    initMap(map, treeColor);
-    bool flag = true;
-    using comjTimer::timer;
-    timer timer1;
-    timer1.start();
-    while(flag) {
-        node curNode;
-        curNode = selection();
-        curNode = expansion(curNode);
-        backPropagation(curNode, simulation(curNode));
-        if (timer1.getTime() > 58) flag = false;
+    double max = -1;
+    auto maxNode = new Node;
+    for (auto tmpNode : root->Next) {
+        double tmpVal;
+        tmpVal = tmpNode->win * 1.0 / tmpNode->n;
+        if (max < tmpVal) {
+            max = tmpVal;
+            maxNode = tmpNode;
+        }
     }
+    return std::pair<int, int>(maxNode->curi, maxNode->curj);
 }
 
 void MCT::initMap(int map[8][8], bool color)
@@ -97,6 +96,8 @@ node MCT::expansion(node curNode)
     auto it = curNode->candidate.begin()+t;
     curNode->candidate.erase(it);
     run(tmpNode->map, i, j, curNode->color);
+    tmpNode->curi = i;
+    tmpNode->curj = j;
     tmpNode->color = !curNode->color;
     curNode->num++;
     tmpNode->c = curNode->c;
@@ -135,6 +136,11 @@ bool MCT::simulation(node curNode)
         run(tmpMap, i, j, tmpColor);
         tmpColor = !tmpColor;
         candidate.clear();
+        for(int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++)
+                std::cout << tmpMap[i][j] << " ";
+            std::cout << std::endl;
+        }
     }
 
     return isWin(tmpMap, root->color);

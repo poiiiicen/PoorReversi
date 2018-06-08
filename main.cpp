@@ -10,7 +10,8 @@ int main() {
         for (int &j : i)
             in >> j;
     MCT tree;
-    tree.creatMCT(map, false);
+    tree.createMCT(false);
+    tree.updateMCT(map);
     std::cout << "Hello, World!" << std::endl;
     return 0;
 }

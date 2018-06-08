@@ -12,10 +12,10 @@
 
 class MCT{
 public:
-    explicit MCT(node r = nullptr):root(r){init();}
+    MCT(){init();}
     ~MCT() = default;
-    void creatMCT(int map[8][8], bool color);
-    void updateMCT(int map[8][8]);
+    void createMCT(bool color);
+    std::pair<int, int> updateMCT(int map[8][8]);
 private:
     void init(){
         auto tmpNode = new Node;
@@ -25,11 +25,15 @@ private:
         tmpNode->t = 0;
         tmpNode->num = 0;
         tmpNode->space = 64;
+        tmpNode->curi = -1;
+        tmpNode->curj = -1;
         for (auto &i : tmpNode->map)
                 for (int &j : i) j = 0;
         for (int i = 0; i < 64; i++) tmpNode->candidate.push_back(i);
         tmpNode->father = nullptr;
         root = tmpNode;
+        lunci = 0;
+        treeColor = false;
     }
     void initMap(int map[8][8], bool color);
     node selection();
@@ -37,10 +41,10 @@ private:
     bool simulation(node curNode);
     void backPropagation(node curNode, bool isWin);
 private:
-    node root;
-    bool treeColor;
+    node root{};
+    bool treeColor{};
     std::default_random_engine random;
-    int lunci;
+    int lunci{};
 };
 
 

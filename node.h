@@ -14,6 +14,9 @@ struct Node
     double c;  //const
     int t;     //sum of total times
 
+    int curi;
+    int curj;  //current position chosen
+
     int num;   //number of sons
     int space; //spaces on the chess map
     std::vector<node> Next; //point to the son node
