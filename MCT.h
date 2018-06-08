@@ -27,6 +27,7 @@ private:
         tmpNode->space = 64;
         tmpNode->curi = -1;
         tmpNode->curj = -1;
+        tmpNode->isEnd = false;
         for (auto &i : tmpNode->map)
                 for (int &j : i) j = 0;
         for (int i = 0; i < 64; i++) tmpNode->candidate.push_back(i);
@@ -34,6 +35,7 @@ private:
         root = tmpNode;
         lunci = 0;
         treeColor = false;
+
     }
     void initMap(int map[8][8], bool color);
     node selection();
