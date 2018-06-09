@@ -33,7 +33,7 @@ std::pair<int, int> MCT::updateMCT(int map[8][8]) {
 #ifdef DEBUG
             std::cout << "expansion" << " " << num_node << std::endl;
 #endif
-            if (!curNode->isEnd) backPropagation(curNode, simulation(curNode));
+            backPropagation(curNode, simulation(curNode));
 #ifdef DEBUG
             std::cout << "backPropagation" << " " << num_node << std::endl;
 #endif
@@ -170,6 +170,9 @@ node MCT::expansion(node curNode) {
 }
 
 bool MCT::simulation(node curNode) {
+
+    if (curNode->isEnd)
+        return isWin(curNode->map, root->color);
     int tmpMap[8][8];
     std::vector<int> candidate;
     for (int i = 0; i < 8; i++)
