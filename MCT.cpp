@@ -97,7 +97,9 @@ node MCT::selection() {
         node maxNode;
         for (auto tmpNode : curNode->Next) {
             double tmpVal;
-            tmpVal = tmpNode->win * 1.0 / tmpNode->n + tmpNode->c * (log(tmpNode->t) / tmpNode->n);
+            if (tmpNode->father->color == treeColor) tmpVal = tmpNode->win * 1.0 / tmpNode->n + tmpNode->c * (log(tmpNode->t) / tmpNode->n);
+            if (tmpNode->father->color != treeColor) tmpVal = (1 - tmpNode->win * 1.0 / tmpNode->n) + tmpNode->c * (log(tmpNode->t) / tmpNode->n);
+
 #ifdef DEBUG
             std::cout << tmpVal << ":" << tmpNode->win << ":" << tmpNode->n << ":" << tmpNode->c << ":" << tmpNode->t << " ";
 #endif

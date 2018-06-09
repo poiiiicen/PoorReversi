@@ -28,8 +28,6 @@ private:
         tmpNode->n = 0;
         tmpNode->c = sqrt(2);
         tmpNode->t = 0;
-        tmpNode->num = 0;
-        tmpNode->space = 64;
         tmpNode->curi = -1;
         tmpNode->curj = -1;
         tmpNode->isEnd = false;
