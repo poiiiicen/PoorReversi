@@ -7,9 +7,9 @@ bool isLegal(int map[8][8], int coni, int conj, bool color) {
     if (map[coni][conj] != 0) return false;
     int i, j;
     bool flag = false;
-    for (int di = 0; di < 8; di++) {
-        i = coni + dir[di][0];
-        j = conj + dir[di][1];
+    for (const int *di : dir) {
+        i = coni + di[0];
+        j = conj + di[1];
         while (i >= 0 && i < 8 && j >= 0 && j < 8) {
             if (!flag && (map[i][j] == 2 && color || map[i][j] == 1 && !color)) {
                 flag = true;
@@ -20,8 +20,8 @@ bool isLegal(int map[8][8], int coni, int conj, bool color) {
             } else if (map[i][j] == 0) {
                 break;
             }
-            i = i + dir[di][0];
-            j = j + dir[di][1];
+            i = i + di[0];
+            j = j + di[1];
         }
         flag = false;
     }
@@ -33,9 +33,9 @@ void run(int map[8][8], int coni, int conj, bool color) {
     int i, j;
     bool flag = false;
     bool doThis = false;
-    for (int di = 0; di < 8; di++) {
-        i = coni + dir[di][0];
-        j = conj + dir[di][1];
+    for (const int *di : dir) {
+        i = coni + di[0];
+        j = conj + di[1];
         while (i >= 0 && i < 8 && j >= 0 && j < 8) {
             if (!flag && (map[i][j] == 2 && color || map[i][j] == 1 && !color)) {
                 flag = true;
@@ -47,16 +47,16 @@ void run(int map[8][8], int coni, int conj, bool color) {
             } else if (map[i][j] == 0) {
                 break;
             }
-            i = i + dir[di][0];
-            j = j + dir[di][1];
+            i = i + di[0];
+            j = j + di[1];
         }
         if (doThis) {
-            i = coni + dir[di][0];
-            j = conj + dir[di][1];
+            i = coni + di[0];
+            j = conj + di[1];
             while (map[i][j] == 2 && color || map[i][j] == 1 && !color) {
                 map[i][j] = color ? 1 : 2;
-                i = i + dir[di][0];
-                j = j + dir[di][1];
+                i = i + di[0];
+                j = j + di[1];
             }
         }
         doThis = false;

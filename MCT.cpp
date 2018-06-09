@@ -5,6 +5,8 @@
 #include <iostream>
 #include <ctime>
 
+#define DEBUG
+
 void MCT::createMCT(bool color) {
     std::default_random_engine random(static_cast<unsigned int>(time(nullptr)));
     this->random = random;
@@ -21,15 +23,30 @@ std::pair<int, int> MCT::updateMCT(int map[8][8]) {
     while (flag) {
         node curNode;
         curNode = selection();
+#ifdef DEBUG
+        std::cout << "selection" << std::endl;
+#endif
         if (!curNode->isEnd) {
             curNode = expansion(curNode);
+#ifdef DEBUG
+            std::cout << "expansion" << std::endl;
+#endif
             if (!curNode->isEnd) backPropagation(curNode, simulation(curNode));
+#ifdef DEBUG
+            std::cout << "backPropagation" << std::endl;
+#endif
         }
         lunci++;
-        //std::cout<<lunci<<std::endl;
-        //std::cout<<timer1.getTime()<<std::endl;
+#ifdef DEBUG
+        std::cout << lunci << std::endl;
+#endif
         if (timer1.getTime() > 58) flag = false;
     }
+
+#ifdef DEBUG
+    std::cout << "Here" << std::endl;
+#endif
+
     double max = -1;
     auto maxNode = new Node;
     for (auto tmpNode : root->Next) {
@@ -40,7 +57,12 @@ std::pair<int, int> MCT::updateMCT(int map[8][8]) {
             maxNode = tmpNode;
         }
     }
-    if (!maxNode->isEnd && maxNode->color == treeColor) return {maxNode->curi, maxNode->curj};
+
+#ifdef DEBUG
+    std::cout << "Over" << std::endl;
+#endif
+
+    if (!maxNode->isEnd && maxNode->color != treeColor) return {maxNode->curi, maxNode->curj};
     else if (maxNode->color != treeColor) return {-1, 0};
     else if (maxNode->isEnd) return {0, -1};
 }

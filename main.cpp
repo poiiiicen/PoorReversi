@@ -3,7 +3,9 @@
 #include "MCT.h"
 #include "exceptions.h"
 
-const std::string SESSION_ID = "7";
+#define DEBUG
+
+const std::string SESSION_ID = "47";
 const std::string SERVER = "http://47.89.179.202:5000";
 const std::string CREATE_SESSION = "/create_session/" + SESSION_ID;
 const std::string GET_TURN = "/turn/" + SESSION_ID;
@@ -73,7 +75,22 @@ bool move(MCT &mct, const std::string &player) {
         std::cout << e.what() << std::endl;
         return false;
     }
+
+#ifdef DEBUG
+    for (int i = 0; i != 8; ++i) {
+        for (int j = 0; j != 8; ++j) {
+            std::cout << board[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+#endif
+
     auto pos = mct.updateMCT(board);
+
+#ifdef DEBUG
+    std::cout << pos.first << " " << pos.second << std::endl;
+#endif
+
     if (pos.first == -1)
         return true;
     if (pos.second == -1)
@@ -96,6 +113,11 @@ int main() {
         return 1;
     }
     MCT mct;
+
+#ifdef DEBUG
+    std::cout << player << std::endl;
+#endif
+
     mct.createMCT(player == "B");
     while (true) {
         try {
@@ -113,7 +135,7 @@ int main() {
                 break;
             }
         }
-        catch (BoardException &e) {
+        catch (MoveException &e) {
             std::cout << e.what() << std::endl;
             return 1;
         }
