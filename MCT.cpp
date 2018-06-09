@@ -48,7 +48,7 @@ std::pair<int, int> MCT::updateMCT(int map[8][8]) {
 #ifdef DEBUG
     std::cout << "Here" << std::endl;
 #endif
-
+    if (root->isEnd) return {0, -1};
     double max = -1;
     auto maxNode = new Node;
     for (auto tmpNode : root->Next) {
@@ -66,8 +66,6 @@ std::pair<int, int> MCT::updateMCT(int map[8][8]) {
 
     if (!maxNode->isEnd && maxNode->color != treeColor) return {maxNode->curi, maxNode->curj};
     else if (!maxNode->isEnd && maxNode->color == treeColor) return {-1, 0};
-    else if (maxNode->isEnd)
-        return {0, -1};
 }
 
 void MCT::initMap(int map[8][8], bool color) {
@@ -77,8 +75,7 @@ void MCT::initMap(int map[8][8], bool color) {
     tmpNode->n = 0;
     tmpNode->c = sqrt(2);
     tmpNode->t = 0;
-    tmpNode->num = 0;
-    tmpNode->space = 64;
+    tmpNode->isEnd = false;
     for (int i = 0; i < 8; i++)
         for (int j = 0; j < 8; j++) tmpNode->map[i][j] = map[i][j];
     for (int i = 0; i < 8; i++)
@@ -148,10 +145,7 @@ node MCT::expansion(node curNode) {
         tmpNode->curj = j;
     }
     tmpNode->color = !curNode->color;
-    curNode->num++;
     tmpNode->c = curNode->c;
-    tmpNode->space = curNode->space - 1;
-    tmpNode->num = 0;
     tmpNode->t = curNode->n;
     tmpNode->win = 0;
     tmpNode->n = 0;
