@@ -100,13 +100,25 @@ node MCT::selection() {
         for (auto tmpNode : curNode->Next) {
             double tmpVal;
             tmpVal = tmpNode->win * 1.0 / tmpNode->n + tmpNode->c * (log(tmpNode->t) / tmpNode->n);
+#ifdef DEBUG
+            std::cout << tmpVal << ":" << tmpNode->win << ":" << tmpNode->n << ":" << tmpNode->c << ":" << tmpNode->t << " ";
+#endif
             if (max < tmpVal) {
                 max = tmpVal;
                 maxNode = tmpNode;
             }
         }
- #ifdef DEBUG
-    std::cout << max << std::endl;
+#ifdef DEBUG
+        std::cout << std::endl << max << " " << curNode->isEnd << " " << (curNode == maxNode) << " "
+                  << curNode->candidate.size() << " " << curNode->Next.size() << std::endl;
+        if (max == -1) {
+            for (int i = 0; i < 8; ++i) {
+                for (int j = 0; j < 8; ++j){
+                    std::cout << curNode->map[i][j] << " ";
+                }
+                std::cout << "\n";
+            }
+        }
 #endif
         curNode = maxNode;
     }
