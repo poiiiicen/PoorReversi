@@ -65,8 +65,9 @@ std::pair<int, int> MCT::updateMCT(int map[8][8]) {
 #endif
 
     if (!maxNode->isEnd && maxNode->color != treeColor) return {maxNode->curi, maxNode->curj};
-    else if (maxNode->color != treeColor) return {-1, 0};
-    else if (maxNode->isEnd) return {0, -1};
+    else if (!maxNode->isEnd && maxNode->color == treeColor) return {-1, 0};
+    else if (maxNode->isEnd)
+        return {0, -1};
 }
 
 void MCT::initMap(int map[8][8], bool color) {
@@ -165,6 +166,8 @@ node MCT::expansion(node curNode) {
             for (int j = 0; j < 8; j++)
                 if (isLegal(tmpNode->map, i, j, tmpNode->color)) tmpNode->candidate.push_back(i * 8 + j);
         if (tmpNode->candidate.empty()) tmpNode->isEnd = true;
+    } else {
+        tmpNode->isEnd = false;
     }
     return tmpNode;
 }

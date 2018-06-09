@@ -5,7 +5,7 @@
 
 #define DEBUG
 
-const std::string SESSION_ID = "46";
+const std::string SESSION_ID = "42";
 const std::string SERVER = "http://47.89.179.202:5000";
 const std::string CREATE_SESSION = "/create_session/" + SESSION_ID;
 const std::string GET_TURN = "/turn/" + SESSION_ID;
@@ -79,14 +79,6 @@ bool move(MCT &mct, const std::string &player) {
         return false;
     }
 
-#ifdef DEBUG
-    for (int i = 0; i != 8; ++i) {
-        for (int j = 0; j != 8; ++j) {
-            std::cout << board[i][j] << " ";
-        }
-        std::cout << "\n";
-    }
-#endif
 
     auto pos = mct.updateMCT(board);
 
@@ -98,11 +90,26 @@ bool move(MCT &mct, const std::string &player) {
         return true;
     if (pos.second == -1)
         return false;
-    res = post_response(
-            SERVER + POST_MOVE + "/" + std::to_string(pos.first) + "/" + std::to_string(pos.second) + "/" + player);
+    try {
+        res = post_response(
+                SERVER + POST_MOVE + "/" + std::to_string(pos.first) + "/" + std::to_string(pos.second) + "/" + player);
+    }
+    catch (StatusCodeException &e) {
+        std::cout << e.what() << " " << e.get_status_code() << std::endl;
+        res = post_response(
+                SERVER + POST_MOVE + "/" + std::to_string(pos.first) + "/" + std::to_string(pos.second) + "/" + player);
+    }
     if (res == "ERROR") {
         throw MoveException();
     }
+#ifdef DEBUG
+    for (int i = 0; i != 8; ++i) {
+        for (int j = 0; j != 8; ++j) {
+            std::cout << board[i][j] << " ";
+        }
+        std::cout << "\n";
+    }
+#endif
     return true;
 }
 
