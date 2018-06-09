@@ -5,7 +5,7 @@
 
 #define DEBUG
 
-const std::string SESSION_ID = "47";
+const std::string SESSION_ID = "46";
 const std::string SERVER = "http://47.89.179.202:5000";
 const std::string CREATE_SESSION = "/create_session/" + SESSION_ID;
 const std::string GET_TURN = "/turn/" + SESSION_ID;
@@ -45,7 +45,10 @@ std::string get_turn() {
     try {
         res = get_response(SERVER + GET_TURN);
     }
-    catch (StatusCodeException &e) { std::cout << e.what() << " " << e.get_status_code() << std::endl; }
+    catch (StatusCodeException &e) {
+        std::cout << e.what() << " " << e.get_status_code() << std::endl;
+        return get_turn();
+    }
     if (res.length() != 1 || res != "W" && res != "B") {
         throw TurnException();
     }

@@ -7,6 +7,7 @@
 
 #include <vector>
 
+extern int num_node;
 typedef struct Node *node;
 struct Node {
     int win;   //win times
@@ -25,6 +26,9 @@ struct Node {
     bool color; //0 for white, 1 for black
     bool isEnd; //is end or not
     node father;
+    Node() {
+        num_node++;
+    }
 };
 
 #endif //POORREVERSI_NODE_H

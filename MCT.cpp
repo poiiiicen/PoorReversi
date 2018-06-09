@@ -7,6 +7,8 @@
 
 #define DEBUG
 
+int num_node = 0;
+
 void MCT::createMCT(bool color) {
     std::default_random_engine random(static_cast<unsigned int>(time(nullptr)));
     this->random = random;
@@ -24,16 +26,16 @@ std::pair<int, int> MCT::updateMCT(int map[8][8]) {
         node curNode;
         curNode = selection();
 #ifdef DEBUG
-        std::cout << "selection" << std::endl;
+        std::cout << "selection" << " " << num_node << std::endl;
 #endif
         if (!curNode->isEnd) {
             curNode = expansion(curNode);
 #ifdef DEBUG
-            std::cout << "expansion" << std::endl;
+            std::cout << "expansion" << " " << num_node << std::endl;
 #endif
             if (!curNode->isEnd) backPropagation(curNode, simulation(curNode));
 #ifdef DEBUG
-            std::cout << "backPropagation" << std::endl;
+            std::cout << "backPropagation" << " " << num_node << std::endl;
 #endif
         }
         lunci++;
@@ -88,9 +90,13 @@ void MCT::initMap(int map[8][8], bool color) {
 
 node MCT::selection() {
     node curNode = this->root;
+#ifdef DEBUG
+    std::cout << "Before" << std::endl;
+#endif
     while (curNode->candidate.empty()) {
+        if (curNode->isEnd) break;
         double max = -1;
-        auto maxNode = new Node;
+        node maxNode;
         for (auto tmpNode : curNode->Next) {
             double tmpVal;
             tmpVal = tmpNode->win * 1.0 / tmpNode->n + tmpNode->c * (log(tmpNode->t) / tmpNode->n);
@@ -99,8 +105,14 @@ node MCT::selection() {
                 maxNode = tmpNode;
             }
         }
+ #ifdef DEBUG
+    std::cout << max << std::endl;
+#endif
         curNode = maxNode;
     }
+#ifdef DEBUG
+    std::cout << "After" << std::endl;
+#endif
     return curNode;
 }
 
